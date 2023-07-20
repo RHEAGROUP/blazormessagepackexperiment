@@ -29,8 +29,7 @@ namespace MessagePackTest.MessagePack
 
     /// <summary>
     /// The purpose of the <see cref="Payload"/> class is to act as a wrapper class around
-    /// the various model classes. 
-    /// 
+    /// the various model classes.
     /// </summary>
     [MessagePackObject]
     public class Payload

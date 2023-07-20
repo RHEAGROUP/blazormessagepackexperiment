@@ -5,11 +5,16 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagePackTest", "messagepacktest\MessagePackTest.csproj", "{F7ECBEBA-6FB1-4CEE-9D3E-433F53E2DAB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagePackTest.Model", "messagepacktest.model\MessagePackTest.Model.csproj", "{08DD7B4F-5F15-4C8B-BD87-4DD11E9C06E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagePackTest.Model", "messagepacktest.model\MessagePackTest.Model.csproj", "{08DD7B4F-5F15-4C8B-BD87-4DD11E9C06E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagePackTest.MessagePack", "MessagePackTest.MessagePack\MessagePackTest.MessagePack.csproj", "{EFF279A8-FFE4-4A88-8DEF-FF89DAC324AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagePackTest.MessagePack", "MessagePackTest.MessagePack\MessagePackTest.MessagePack.csproj", "{EFF279A8-FFE4-4A88-8DEF-FF89DAC324AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessagePackTest.MessagePack.Tests", "MessagePackTest.MessagePack.Tests\MessagePackTest.MessagePack.Tests.csproj", "{4E7E4433-0E65-47B3-89C8-21FE60E5344B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagePackTest.MessagePack.Tests", "MessagePackTest.MessagePack.Tests\MessagePackTest.MessagePack.Tests.csproj", "{4E7E4433-0E65-47B3-89C8-21FE60E5344B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4D8995F1-4408-4376-BF21-D1ED4100FA9B}"
+	ProjectSection(SolutionItems) = preProject
+		README = README
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
