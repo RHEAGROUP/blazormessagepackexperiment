@@ -21,8 +21,13 @@
 namespace MessagePackTest.MessagePack.Tests
 {
     using Model;
+    
     using NUnit.Framework;
 
+    /// <summary>
+    /// Suite of tests for the <see cref="Serializer"/> class
+    /// </summary>
+    [TestFixture]
     public class SerializerTestFixture
     {
         private Serializer serializer;
