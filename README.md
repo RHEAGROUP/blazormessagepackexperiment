@@ -1,4 +1,4 @@
-== Introduction
+## Introduction
 
 The **blazormessagepackexperiment** repository contains an experimental implementation of a simplified ECSS-E-TM-10-25 like serializer on the basis of [MessagePack](https://github.com/MessagePack-CSharp/MessagePack-CSharp). The solution contains a very minimal **MessagePackTest.Model** project that contains model classes, a **MessagePackTest.MessagePack** project that contains the serializer and the **MessagePackTest** project that contains a simple blazor application that is used to test the performance of Blazor deserialization using MessagePack.
 
@@ -35,11 +35,11 @@ ECSS-E-TM-10-25 uses JSON serialization where the objects are serialized to a JS
 
 > Note: the `RatioScale` and `CyclicRatioScale` must have special treatment such that `CyclicRatioScale` instances are not duplicated in the `RatioScale` property of the `Payload` class.
 
-== Versions
+## Versions
 
 The CDP4-COMET data-model provides versioned extensions of ECSS-E-TM-10-25. All version will need to be supported. MessagePack uses string and numerical keys to identify properties of an object when serialized to the binary format. The numneric keys provide best performance and are therefore used for serialization of the 10-25 objects. The value of the keys may not change over time. For each version that CDP4-COMET supports, a dedicated versioned `Payload` class and dedicated versioned `IMessagePackFormatter{Thing}` classes are generated. For each version a namespace is created. The baseline version is `1.0.0` which corresponds to version `2.4.1` of ECSS-E-TM-10-25 Annex A. The namespace for version `1.0.0` of the MessagePack serializer is the following: `CDP4MessagePackerializer.v1_0_0.`.
 
-== Content Negoitation
+## Content Negoitation
 
 The `Content-Type` HTTP header is the header that specifies the ECCS-E-TM-10-25 protocol and it's version. The CDP4-COMET Web Services support the following:
   
