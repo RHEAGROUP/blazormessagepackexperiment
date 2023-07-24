@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
       <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+      <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +18,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MessagePackTest.MessagePack\MessagePackTest.MessagePack.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="data\payload.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

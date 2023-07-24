@@ -1,5 +1,5 @@
 ﻿//  -------------------------------------------------------------------------------------------------
-//  <copyright file="Serializer.cs" company="RHEA System S.A.">
+//  <copyright file="MessagePackSerializer.cs" company="RHEA System S.A.">
 // 
 //    Copyright 2023 RHEA System S.A.
 // 
@@ -22,6 +22,7 @@ namespace MessagePackTest.MessagePack
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.IO.Pipelines;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -31,10 +32,10 @@ namespace MessagePackTest.MessagePack
     using Model;
 
     /// <summary>
-    /// The purpose of the <see cref="Serializer"/> is to serialize a <see cref="List{Thing}"/>
+    /// The purpose of the <see cref="MessagePackSerializer"/> is to serialize a <see cref="List{Thing}"/>
     /// to a <see cref="Stream"/> using MessagePack serialization and deserialization 
     /// </summary>
-    public class Serializer
+    public class MessagePackSerializer
     {
         /// <summary>
         /// Serializes the <paramref name="things"/> to the provided <paramref name="outputStream"/>
@@ -61,7 +62,20 @@ namespace MessagePackTest.MessagePack
             
             var payload = PayloadFactory.Create(things);
 
-            await MessagePackSerializer.SerializeAsync(outputStream, payload, options, cancellationToken);
+            await global::MessagePack.MessagePackSerializer.SerializeAsync(outputStream, payload, options, cancellationToken);
+        }
+
+        public void SerializeToPipeWriter(List<Thing> things, PipeWriter pipeWriter, CancellationToken cancellationToken)
+        {
+            var resolver = CompositeResolver.Create(
+                ThingFormatterResolver.Instance,
+                StandardResolver.Instance);
+
+            var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+
+            var payload = PayloadFactory.Create(things);
+
+            global::MessagePack.MessagePackSerializer.Serialize(pipeWriter, payload, options, cancellationToken);
         }
 
         /// <summary>
@@ -84,9 +98,9 @@ namespace MessagePackTest.MessagePack
 
             var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
 
-            var payload = await MessagePackSerializer.DeserializeAsync<Payload>(contentStream, options, cancellationToken);
+            var payload = await global::MessagePack.MessagePackSerializer.DeserializeAsync<Payload>(contentStream, options, cancellationToken);
             
-            var result = PayloadFactory.Create(payload);
+			var result = PayloadFactory.Create(payload);
             
             return result;
         }

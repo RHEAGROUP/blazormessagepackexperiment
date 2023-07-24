@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagePackTest.MessagePack
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagePackTest.MessagePack.Tests", "MessagePackTest.MessagePack.Tests\MessagePackTest.MessagePack.Tests.csproj", "{4E7E4433-0E65-47B3-89C8-21FE60E5344B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagePackTest.Server", "MessagePackTest.Server\MessagePackTest.Server.csproj", "{B4F8600D-0B4C-4ACA-8A80-6D82A97D4C26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{4E7E4433-0E65-47B3-89C8-21FE60E5344B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E7E4433-0E65-47B3-89C8-21FE60E5344B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E7E4433-0E65-47B3-89C8-21FE60E5344B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4F8600D-0B4C-4ACA-8A80-6D82A97D4C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4F8600D-0B4C-4ACA-8A80-6D82A97D4C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4F8600D-0B4C-4ACA-8A80-6D82A97D4C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4F8600D-0B4C-4ACA-8A80-6D82A97D4C26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

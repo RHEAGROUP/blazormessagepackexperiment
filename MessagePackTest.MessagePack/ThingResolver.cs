@@ -53,7 +53,7 @@ namespace MessagePackTest.MessagePack
         {
             return FormatterCache<T>.Formatter;
         }
-
+        
         private static class FormatterCache<T>
         {
             public static readonly IMessagePackFormatter<T> Formatter;
@@ -69,7 +69,10 @@ namespace MessagePackTest.MessagePack
         }
     }
 
-    internal static class ThingResolverGetFormatterHelper
+	/// <summary>
+	/// Helper class that resolves a <see cref="IMessagePackFormatter"/> based on a <see cref="Type"/>
+	/// </summary>
+	internal static class ThingResolverGetFormatterHelper
     {
         // If type is concrete type, use type-formatter map
         static readonly Dictionary<Type, object> FormatterMap = new Dictionary<Type, object>()
@@ -78,6 +81,15 @@ namespace MessagePackTest.MessagePack
             {typeof(Parameter), new ParameterFormatter()}
         };
 
+        /// <summary>
+        /// Gets a <see cref="IMessagePackFormatter"/> for the specific <see cref="Type"/>
+        /// </summary>
+        /// <param name="t">
+        /// The subject <see cref="Type"/>
+        /// </param>
+        /// <returns>
+        /// an instance of <see cref="IMessagePackFormatter"/>
+        /// </returns>
         internal static object GetFormatter(Type t)
         {
             object formatter;

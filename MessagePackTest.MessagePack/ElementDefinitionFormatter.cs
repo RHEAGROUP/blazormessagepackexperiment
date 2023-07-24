@@ -22,7 +22,7 @@ namespace MessagePackTest.MessagePack
 {
     using System;
     using System.Buffers;
-
+    using System.Collections.Generic;
     using global::MessagePack;
     using global::MessagePack.Formatters;
 
@@ -56,7 +56,7 @@ namespace MessagePackTest.MessagePack
             writer.WriteArrayHeader(5);
             writer.Write(elementDefinition.Iid.ToByteArray());
 
-            writer.WriteArrayHeader(elementDefinition.Aliases.Length);
+            writer.WriteArrayHeader(elementDefinition.Aliases.Count);
             foreach (var alias in elementDefinition.Aliases)
             {
                 writer.Write(alias);
@@ -108,10 +108,10 @@ namespace MessagePackTest.MessagePack
                         break;
                     case 1:
                         var aliasLength = reader.ReadArrayHeader();
-                        elementDefinition.Aliases = new string[aliasLength];
+                        elementDefinition.Aliases = new List<string>();
                         for (int aliasCounter = 0; aliasCounter < aliasLength; aliasCounter++)
                         {
-                            elementDefinition.Aliases[aliasCounter] = reader.ReadString();
+                            elementDefinition.Aliases.Add(reader.ReadString());
                         }
                         break;
                     case 2:

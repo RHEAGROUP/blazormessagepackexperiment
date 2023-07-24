@@ -58,7 +58,7 @@ namespace MessagePackTest.Model
         /// <summary>
         /// Gets or sets a representation of an alternative human-readable name for a concept 
         /// </summary>
-        public string[] Aliases { get; set; }
+        public List<string> Aliases { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets the unique identifiers of the contained <see cref="Parameter"/>s

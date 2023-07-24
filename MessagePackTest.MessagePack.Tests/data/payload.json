@@ -1,0 +1,24 @@
+﻿{
+  "Created": "2023-07-24T07:52:31.7195163Z",
+  "ElementDefinition": [
+    {
+      "Iid": "85e98ec8-14d4-4f9c-b018-e87e8d5a938b",
+      "Name": "ed_0",
+      "Description": "this is an element definition description 0 in which the quick brown fox jumps over the lazy dog",
+      "Aliases": [
+        "alias_0",
+        "another alias"
+      ],
+      "Parameters": [
+        "d6fb93e9-7c5c-4294-9d7f-10f0ec71703f"
+      ]
+    }
+  ],
+  "Parameter": [
+    {
+      "Iid": "d6fb93e9-7c5c-4294-9d7f-10f0ec71703f",
+      "Name": "p_0",
+      "Value": 0
+    }
+  ]
+}

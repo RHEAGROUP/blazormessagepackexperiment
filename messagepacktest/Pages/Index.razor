@@ -1,9 +1,225 @@
 ﻿@page "/"
 
+@using System.Diagnostics
+@using System.Runtime.CompilerServices
+@using System.Text
+
+@inject HttpClient HttpClient;
+
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>MessagePack Test Environment</h1>
 
-Welcome to your new app.
+<div id="parentDiv"> 
+	<div id="MessagePack"> 
+		<button @onclick="this.QueryMessagePack">MessagePack</button>
+		<button @onclick="this.CancelMessagePackQuery">Cancel</button>
+		<InputTextArea id="MessagePackResults" @bind-Value="this.messagePackResults"></InputTextArea>
+	</div> 
+	<div id="JSON"> 
+		<button @onclick="this.QueryJson">JSON</button>
+		<button @onclick="this.CancelJsonQuery">Cancel</button>
+		<InputTextArea id="JSONResults" @bind-Value="this.jSONResults"></InputTextArea>
+	</div> 
+</div> 
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code
+{
+	private string messagePackResults = "";
+
+	private string jSONResults = "";
+
+	private CancellationTokenSource jsonCts;
+
+	private CancellationTokenSource messagePackCts;
+
+	private void CancelJsonQuery()
+	{
+		this.jsonCts?.Cancel();
+	}
+
+	private void CancelMessagePackQuery()
+	{
+		this.messagePackCts?.Cancel();
+	}
+
+	/// <summary>
+	/// Query data as Json
+	/// </summary>
+	/// <returns></returns>
+	private async Task QueryJson()
+	{
+		this.jSONResults = string.Empty;
+
+		this.jsonCts = new CancellationTokenSource();
+		var cancellationToken = this.jsonCts.Token;
+		
+		this.HttpClient.DefaultRequestHeaders.Clear();
+		this.HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/json; ecss-e-tm-10-25; version=1.0.0");
+
+		var sb = new StringBuilder();
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeJson(1, cancellationToken);
+			sb.AppendLine(result);
+			this.jSONResults = sb.ToString();
+			StateHasChanged();
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeJson(10, cancellationToken);
+			sb.AppendLine(result);
+			this.jSONResults = sb.ToString();
+			StateHasChanged();
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeJson(100, cancellationToken);
+			sb.AppendLine(result);
+			this.jSONResults = sb.ToString();
+			StateHasChanged();
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeJson(1000, cancellationToken);
+			sb.AppendLine(result);
+			this.jSONResults = sb.ToString();
+			StateHasChanged();
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeJson(10000, cancellationToken);
+			sb.AppendLine(result);
+			this.jSONResults = sb.ToString();
+			StateHasChanged();
+		}
+	}
+
+	/// <summary>
+	/// Query data as MessagePack
+	/// </summary>
+	/// <returns></returns>
+	private async Task QueryMessagePack()
+	{
+		this.messagePackResults = string.Empty;
+
+		this.messagePackCts = new CancellationTokenSource();
+		var cancellationToken = this.messagePackCts.Token;
+
+		this.HttpClient.DefaultRequestHeaders.Clear();
+		this.HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/msgpack; ecss-e-tm-10-25; version=1.0.0");
+		
+		var sb = new StringBuilder();
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeMessagePack(1, cancellationToken);
+			sb.AppendLine(result);
+			this.messagePackResults = sb.ToString();
+			StateHasChanged();
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeMessagePack(10, cancellationToken);
+			sb.AppendLine(result);
+			this.messagePackResults = sb.ToString();
+			StateHasChanged();
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeMessagePack(100, cancellationToken);
+			sb.AppendLine(result);
+			this.messagePackResults = sb.ToString();
+			StateHasChanged();
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeMessagePack(1000, cancellationToken);
+			sb.AppendLine(result);
+			this.messagePackResults = sb.ToString();
+			StateHasChanged();
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			var result = await this.QueryBySizeMessagePack(10000, cancellationToken);
+			sb.AppendLine(result);
+			this.messagePackResults = sb.ToString();
+			StateHasChanged();
+		}
+	}
+
+	/// <summary>
+	/// Queries data by amount of things using MessagePack
+	/// </summary>
+	/// <param name="amount">
+	/// the requested amount
+	/// </param>
+	/// <param name="cancellationToken">
+	/// The <see cref="CancellationToken"/>
+	/// </param>
+	/// <returns>
+	/// an awaitable <see cref="Task"/>
+	/// </returns>
+	private async Task<string> QueryBySizeMessagePack(int amount, CancellationToken cancellationToken)
+	{
+		var result = string.Empty;
+
+		var serializer = new MessagePackSerializer();
+
+		var httpResponseMessage = await this.HttpClient.GetAsync($"/things/{amount}", cancellationToken);
+
+		var stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
+		
+		var sw = Stopwatch.StartNew();
+
+		var things = await serializer.Deserialize(stream, cancellationToken);
+		
+		result = $"MessagePack payload size {stream.Length} [bytes]; deserialize {things.Count()} things in {sw.ElapsedMilliseconds} [ms]";
+
+		Console.WriteLine(result);
+
+		return result;
+	}
+
+	/// <summary>
+	/// Queries data by amount of things using JSON
+	/// </summary>
+	/// <param name="amount">
+	/// the requested amount
+	/// </param>
+	/// <param name="cancellationToken">
+	/// The <see cref="CancellationToken"/>
+	/// </param>
+	/// <returns>
+	/// an awaitable <see cref="Task"/>
+	/// </returns>
+	private async Task<string> QueryBySizeJson(int amount, CancellationToken cancellationToken)
+	{
+		var result = string.Empty;
+
+		var httpResponseMessage = await this.HttpClient.GetAsync($"/things/{amount}", cancellationToken);
+
+		var stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
+
+		var sw = Stopwatch.StartNew();
+
+		var jsonSerializer = new MessagePack.JsonSerializer();
+
+		var things  = await jsonSerializer.Deserialize(stream, cancellationToken);
+
+		result = $"JSON payload size {stream.Length} [bytes]; deserialize {things.Count()} things in {sw.ElapsedMilliseconds} [ms]";
+
+		Console.WriteLine(result);
+
+		return result;
+	}
+}

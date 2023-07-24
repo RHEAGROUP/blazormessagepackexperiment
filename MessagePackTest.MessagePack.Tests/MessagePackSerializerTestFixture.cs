@@ -1,5 +1,5 @@
 //  -------------------------------------------------------------------------------------------------
-//  <copyright file="SerializerTestFixture.cs" company="RHEA System S.A.">
+//  <copyright file="MessagePackSerializerTestFixture.cs" company="RHEA System S.A.">
 // 
 //    Copyright 2023 RHEA System S.A.
 // 
@@ -25,26 +25,26 @@ namespace MessagePackTest.MessagePack.Tests
     using NUnit.Framework;
 
     /// <summary>
-    /// Suite of tests for the <see cref="Serializer"/> class
+    /// Suite of tests for the <see cref="MessagePackSerializer"/> class
     /// </summary>
     [TestFixture]
-    public class SerializerTestFixture
+    public class MessagePackSerializerTestFixture
     {
-        private Serializer serializer;
+        private MessagePackSerializer messagePackSerializer;
 
         private List<Thing> things;
  
         [SetUp]
         public void Setup()
         {
-            this.serializer = new Serializer();
+            this.messagePackSerializer = new MessagePackSerializer();
 
             var elementDefinition_battery = new ElementDefinition
             {
                 Iid = Guid.Parse("a668865d-15fd-4e6e-83ed-de8e19322bec"),
                 Name = "battery",
                 Description = "this is a battery",
-                Aliases = new string[] {"alias_1", "alias_2"},
+                Aliases = new List<string> {"alias_1", "alias_2"},
                 Parameters = new List<Guid>{ Guid.Parse("9d471fae-010f-4bc2-b169-9d9ee833c5d4"), 
                     Guid.Parse("337187a1-5160-4495-a727-9b2f5f730a36") }
             };
@@ -54,7 +54,7 @@ namespace MessagePackTest.MessagePack.Tests
                 Iid = Guid.Parse("3157cb37-a632-4814-b605-b7a0bf258e3c"),
                 Name = "PCDU",
                 Description = "this is a PCDU",
-                Aliases = new string[]{}
+                Aliases = new List<string> ()
             };
 
             var parameter_mass = new Parameter
@@ -87,11 +87,11 @@ namespace MessagePackTest.MessagePack.Tests
 
             var stream = new MemoryStream();
 
-            await this.serializer.SerializeToStream(this.things, stream, cts.Token);
+            await this.messagePackSerializer.SerializeToStream(this.things, stream, cts.Token);
 
             stream.Position = 0;
 
-            var deserializedThings = await this.serializer.Deserialize(stream, cts.Token);
+            var deserializedThings = await this.messagePackSerializer.Deserialize(stream, cts.Token);
 
             var parameter_mass = deserializedThings.OfType<Parameter>()
                 .Single(x => x.Iid == Guid.Parse("9d471fae-010f-4bc2-b169-9d9ee833c5d4"));
