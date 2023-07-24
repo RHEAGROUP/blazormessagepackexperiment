@@ -102,7 +102,7 @@ namespace MessagePackTest.Server.v1_0_0
 
 			var jsonWriterOptions = new JsonWriterOptions
 			{
-				Indented = true
+				Indented = false
 			};
 
 			jsonSerializer.SerializeToPipeWriter(things, res.BodyWriter, jsonWriterOptions, cancellationToken);
