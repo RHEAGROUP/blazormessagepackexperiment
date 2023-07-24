@@ -22,6 +22,7 @@ namespace MessagePackTest.MessagePack
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.IO;
 	using System.IO.Pipelines;
 	using System.Linq;
@@ -134,79 +135,81 @@ namespace MessagePackTest.MessagePack
 		{
 			var things = new List<Thing>();
 
-			using (var document = await JsonDocument.ParseAsync(contentStream, default(JsonDocumentOptions), cancellationToken))
+			var sw = Stopwatch.StartNew();
+
+			using var document = await JsonDocument.ParseAsync(contentStream, default(JsonDocumentOptions), cancellationToken);
+			var root = document.RootElement;
+
+			Console.WriteLine("JsonDocument Parsed in {0} [ms]", sw.ElapsedMilliseconds);
+
+			if (root.TryGetProperty("Created"u8, out var createdProperty))
 			{
-				var root = document.RootElement;
+				Console.WriteLine("created: ", createdProperty.GetDateTime());
+			}
 
-				if (root.TryGetProperty("Created"u8, out var createdProperty))
+			if (root.TryGetProperty("ElementDefinition"u8, out var elementDefinitionProperty))
+			{
+				foreach (var jsonElement in elementDefinitionProperty.EnumerateArray())
 				{
-					Console.WriteLine("created: ", createdProperty.GetDateTime());
-				}
+					var elementDefinition = new ElementDefinition();
 
-				if (root.TryGetProperty("ElementDefinition"u8, out var elementDefinitionProperty))
-				{
-					foreach (var jsonElement in elementDefinitionProperty.EnumerateArray())
+					if (jsonElement.TryGetProperty("Iid"u8, out var iidProperty))
 					{
-						var elementDefinition = new ElementDefinition();
-
-						if (jsonElement.TryGetProperty("Iid"u8, out var iidProperty))
-						{
-							elementDefinition.Iid = iidProperty.GetGuid();
-						}
-
-						if (jsonElement.TryGetProperty("Name"u8, out var nameProperty))
-						{
-							elementDefinition.Name = nameProperty.GetString();
-						}
-
-						if (jsonElement.TryGetProperty("Description"u8, out var descriptionProperty))
-						{
-							elementDefinition.Description = descriptionProperty.GetString();
-						}
-
-						if (jsonElement.TryGetProperty("Aliases"u8, out var aliasesProperty))
-						{
-							foreach (var aliasJsonElement in aliasesProperty.EnumerateArray())
-							{
-								elementDefinition.Aliases.Add(aliasJsonElement.GetString());
-							}
-						}
-
-						if (jsonElement.TryGetProperty("Parameters"u8, out var parametersProperty))
-						{
-							foreach (var parameterJsonElement in parametersProperty.EnumerateArray())
-							{
-								elementDefinition.Parameters.Add(parameterJsonElement.GetGuid());
-							}
-						}
-
-						things.Add(elementDefinition);
+						elementDefinition.Iid = iidProperty.GetGuid();
 					}
-				}
 
-				if (root.TryGetProperty("Parameter"u8, out var parameterProperty))
-				{
-					foreach (var jsonElement in parameterProperty.EnumerateArray())
+					if (jsonElement.TryGetProperty("Name"u8, out var nameProperty))
 					{
-						var parameter = new Parameter();
-
-						if (jsonElement.TryGetProperty("Iid"u8, out var iidProperty))
-						{
-							parameter.Iid = iidProperty.GetGuid();
-						}
-
-						if (jsonElement.TryGetProperty("Name"u8, out var nameProperty))
-						{
-							parameter.Name = nameProperty.GetString();
-						}
-
-						if (jsonElement.TryGetProperty("Value"u8, out var valueProperty))
-						{
-							parameter.Value = valueProperty.GetDouble();
-						}
-
-						things.Add(parameter);
+						elementDefinition.Name = nameProperty.GetString();
 					}
+
+					if (jsonElement.TryGetProperty("Description"u8, out var descriptionProperty))
+					{
+						elementDefinition.Description = descriptionProperty.GetString();
+					}
+
+					if (jsonElement.TryGetProperty("Aliases"u8, out var aliasesProperty))
+					{
+						foreach (var aliasJsonElement in aliasesProperty.EnumerateArray())
+						{
+							elementDefinition.Aliases.Add(aliasJsonElement.GetString());
+						}
+					}
+
+					if (jsonElement.TryGetProperty("Parameters"u8, out var parametersProperty))
+					{
+						foreach (var parameterJsonElement in parametersProperty.EnumerateArray())
+						{
+							elementDefinition.Parameters.Add(parameterJsonElement.GetGuid());
+						}
+					}
+
+					things.Add(elementDefinition);
+				}
+			}
+
+			if (root.TryGetProperty("Parameter"u8, out var parameterProperty))
+			{
+				foreach (var jsonElement in parameterProperty.EnumerateArray())
+				{
+					var parameter = new Parameter();
+
+					if (jsonElement.TryGetProperty("Iid"u8, out var iidProperty))
+					{
+						parameter.Iid = iidProperty.GetGuid();
+					}
+
+					if (jsonElement.TryGetProperty("Name"u8, out var nameProperty))
+					{
+						parameter.Name = nameProperty.GetString();
+					}
+
+					if (jsonElement.TryGetProperty("Value"u8, out var valueProperty))
+					{
+						parameter.Value = valueProperty.GetDouble();
+					}
+
+					things.Add(parameter);
 				}
 			}
 
