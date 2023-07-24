@@ -136,17 +136,13 @@ namespace MessagePackTest.MessagePack
 			var things = new List<Thing>();
 
 			var sw = Stopwatch.StartNew();
-
 			using var document = await JsonDocument.ParseAsync(contentStream, default(JsonDocumentOptions), cancellationToken);
 			var root = document.RootElement;
 
-			Console.WriteLine("JsonDocument Parsed in {0} [ms]", sw.ElapsedMilliseconds);
-
-			if (root.TryGetProperty("Created"u8, out var createdProperty))
-			{
-				Console.WriteLine("created: ", createdProperty.GetDateTime());
-			}
-
+			var jsonParseTime = sw.ElapsedMilliseconds;
+			
+			sw = Stopwatch.StartNew();
+			
 			if (root.TryGetProperty("ElementDefinition"u8, out var elementDefinitionProperty))
 			{
 				foreach (var jsonElement in elementDefinitionProperty.EnumerateArray())
@@ -212,6 +208,10 @@ namespace MessagePackTest.MessagePack
 					things.Add(parameter);
 				}
 			}
+
+			var jsonDeserializeTime = sw.ElapsedMilliseconds;
+
+			Console.WriteLine("JsonDocument Content Parsed:Deserialized in {0}:{1} [ms]", jsonParseTime, jsonDeserializeTime);
 
 			return things;
 		}
