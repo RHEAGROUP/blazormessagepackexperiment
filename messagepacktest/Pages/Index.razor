@@ -1,7 +1,6 @@
 ﻿@page "/"
 
 @using System.Diagnostics
-@using System.Runtime.CompilerServices
 @using System.Text
 
 @inject HttpClient HttpClient;
@@ -14,12 +13,12 @@
 	<div id="MessagePack"> 
 		<button @onclick="this.QueryMessagePack">MessagePack</button>
 		<button @onclick="this.CancelMessagePackQuery">Cancel</button>
-		<InputTextArea id="MessagePackResults" style="width: 700px;height: 900px;" @bind-Value="this.messagePackResults"></InputTextArea>
+		<InputTextArea id="MessagePackResults" style="width: 700px;height: 300px;" @bind-Value="this.messagePackResults"></InputTextArea>
 	</div> 
 	<div id="JSON"> 
 		<button @onclick="this.QueryJson">JSON</button>
 		<button @onclick="this.CancelJsonQuery">Cancel</button>
-		<InputTextArea id="JSONResults" style="width: 700px;height: 900px;" @bind-Value="this.jSONResults"></InputTextArea>
+		<InputTextArea id="JSONResults" style="width: 700px;height: 300px;" @bind-Value="this.jSONResults"></InputTextArea>
 	</div> 
 </div> 
 
@@ -53,51 +52,88 @@
 
 		this.jsonCts = new CancellationTokenSource();
 		var cancellationToken = this.jsonCts.Token;
-		
+
 		this.HttpClient.DefaultRequestHeaders.Clear();
 		this.HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/json; ecss-e-tm-10-25; version=1.0.0");
 
+		// warm up
+		await this.QueryBySizeJson(1, cancellationToken);
+
+		long payloadSize = 0;
+
 		var sb = new StringBuilder();
+		sb.AppendLine("========================== JSON TEST ===========================");
+		this.jSONResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
+		sb.Append("50 iterations of     2 objects; ");
+		var metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
 		{
-			var result = await this.QueryBySizeJson(1, cancellationToken);
-			sb.AppendLine(result);
-			this.jSONResults = sb.ToString();
-			StateHasChanged();
+			var deserializationMetrics = await this.QueryBySizeJson(1, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
 		}
+		var averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.jSONResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
+		sb.Append("50 iterations of    20 objects; ");
+		metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
 		{
-			var result = await this.QueryBySizeJson(10, cancellationToken);
-			sb.AppendLine(result);
-			this.jSONResults = sb.ToString();
-			StateHasChanged();
+			var deserializationMetrics = await this.QueryBySizeJson(10, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
 		}
+		averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.jSONResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
+		sb.Append("50 iterations of   200 objects; ");
+		metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
 		{
-			var result = await this.QueryBySizeJson(100, cancellationToken);
-			sb.AppendLine(result);
-			this.jSONResults = sb.ToString();
-			StateHasChanged();
+			var deserializationMetrics = await this.QueryBySizeJson(100, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
 		}
+		averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.jSONResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
+		sb.Append("50 iterations of  2000 objects; ");
+		metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
 		{
-			var result = await this.QueryBySizeJson(1000, cancellationToken);
-			sb.AppendLine(result);
-			this.jSONResults = sb.ToString();
-			StateHasChanged();
+			var deserializationMetrics = await this.QueryBySizeJson(1000, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
 		}
+		averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.jSONResults = sb.ToString();
+		StateHasChanged();
+		
+		sb.Append("50 iterations of 20000 objects; ");
+		metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
+		{
+			var deserializationMetrics = await this.QueryBySizeJson(10000, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
+		}
+		averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.jSONResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
-		{
-			var result = await this.QueryBySizeJson(10000, cancellationToken);
-			sb.AppendLine(result);
-			this.jSONResults = sb.ToString();
-			StateHasChanged();
-		}
+		sb.AppendLine("========================= DOME =================================");
+		this.jSONResults = sb.ToString();
+		StateHasChanged();
 	}
 
 	/// <summary>
@@ -113,48 +149,86 @@
 
 		this.HttpClient.DefaultRequestHeaders.Clear();
 		this.HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/msgpack; ecss-e-tm-10-25; version=1.0.0");
-		
+
+		//warm up
+		await this.QueryBySizeMessagePack(1, cancellationToken);
+
+		long payloadSize = 0;
+
 		var sb = new StringBuilder();
 
-		for (int i = 0; i < 10; i++)
-		{
-			var result = await this.QueryBySizeMessagePack(1, cancellationToken);
-			sb.AppendLine(result);
-			this.messagePackResults = sb.ToString();
-			StateHasChanged();
-		}
+		sb.AppendLine("======================= MessagePack TEST =======================");
+		this.jSONResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
+		sb.Append("50 iterations of     2 objects; ");
+		var metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
 		{
-			var result = await this.QueryBySizeMessagePack(10, cancellationToken);
-			sb.AppendLine(result);
-			this.messagePackResults = sb.ToString();
-			StateHasChanged();
+			var deserializationMetrics = await this.QueryBySizeMessagePack(1, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
 		}
+		var averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.messagePackResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
+		sb.Append("50 iterations of    20 objects; ");
+		metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
 		{
-			var result = await this.QueryBySizeMessagePack(100, cancellationToken);
-			sb.AppendLine(result);
-			this.messagePackResults = sb.ToString();
-			StateHasChanged();
+			var deserializationMetrics = await this.QueryBySizeMessagePack(10, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
 		}
+		averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.messagePackResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
+		sb.Append("50 iterations of   200 objects; ");
+		metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
 		{
-			var result = await this.QueryBySizeMessagePack(1000, cancellationToken);
-			sb.AppendLine(result);
-			this.messagePackResults = sb.ToString();
-			StateHasChanged();
+			var deserializationMetrics = await this.QueryBySizeMessagePack(100, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
 		}
+		averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.messagePackResults = sb.ToString();
+		StateHasChanged();
 
-		for (int i = 0; i < 10; i++)
+		sb.Append("50 iterations of  2000 objects; ");
+		metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
 		{
-			var result = await this.QueryBySizeMessagePack(10000, cancellationToken);
-			sb.AppendLine(result);
-			this.messagePackResults = sb.ToString();
-			StateHasChanged();
+			var deserializationMetrics = await this.QueryBySizeMessagePack(1000, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
 		}
+		averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.messagePackResults = sb.ToString();
+		StateHasChanged();
+
+		sb.Append("50 iterations of 20000 objects; ");
+		metrics = new List<DeserializationMetrics>();
+		for (int i = 0; i < 50; i++)
+		{
+			var deserializationMetrics = await this.QueryBySizeMessagePack(10000, cancellationToken);
+			metrics.Add(deserializationMetrics);
+			payloadSize = deserializationMetrics.Size;
+		}
+		averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
+		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
+		this.messagePackResults = sb.ToString();
+		StateHasChanged();
+
+		sb.AppendLine("========================= DOME =================================");
+		this.messagePackResults = sb.ToString();
+		StateHasChanged();
 	}
 
 	/// <summary>
@@ -169,25 +243,28 @@
 	/// <returns>
 	/// an awaitable <see cref="Task"/>
 	/// </returns>
-	private async Task<string> QueryBySizeMessagePack(int amount, CancellationToken cancellationToken)
+	private async Task<DeserializationMetrics> QueryBySizeMessagePack(int amount, CancellationToken cancellationToken)
 	{
-		var result = string.Empty;
-
 		var serializer = new MessagePackSerializer();
 
 		var httpResponseMessage = await this.HttpClient.GetAsync($"/things/{amount}", cancellationToken);
 
 		var stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
-		
+
 		var sw = Stopwatch.StartNew();
 
 		var things = await serializer.Deserialize(stream, cancellationToken);
-		
-		result = $"MessagePack payload size {stream.Length} [bytes]; deserialize {things.Count()} things in {sw.ElapsedMilliseconds} [ms]";
 
-		Console.WriteLine(result);
+		var elapsedMilliseconds = sw.ElapsedMilliseconds;
 
-		return result;
+		var deserializationMetrics = new DeserializationMetrics
+		{
+			Size = stream.Length,
+			Amount = things.Count(),
+			ElapsedMilliseconds = elapsedMilliseconds
+		};
+
+		return deserializationMetrics;
 	}
 
 	/// <summary>
@@ -202,10 +279,8 @@
 	/// <returns>
 	/// an awaitable <see cref="Task"/>
 	/// </returns>
-	private async Task<string> QueryBySizeJson(int amount, CancellationToken cancellationToken)
+	private async Task<DeserializationMetrics> QueryBySizeJson(int amount, CancellationToken cancellationToken)
 	{
-		var result = string.Empty;
-
 		var httpResponseMessage = await this.HttpClient.GetAsync($"/things/{amount}", cancellationToken);
 
 		var stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken);
@@ -216,10 +291,15 @@
 
 		var things  = await jsonSerializer.Deserialize(stream, cancellationToken);
 
-		result = $"JSON payload size {stream.Length} [bytes]; deserialize {things.Count()} things in {sw.ElapsedMilliseconds} [ms]";
+		var elapsedMilliseconds = sw.ElapsedMilliseconds;
 
-		Console.WriteLine(result);
+		var deserializationMetrics = new DeserializationMetrics
+		{
+			Size = stream.Length,
+			Amount = things.Count(),
+			ElapsedMilliseconds = elapsedMilliseconds
+		};
 
-		return result;
+		return deserializationMetrics;
 	}
 }
