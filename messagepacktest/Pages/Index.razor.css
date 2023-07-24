@@ -1,8 +1,8 @@
 ﻿#parentDiv {
-    width: 960px;
+    width: 100%;
 }
 
 #MessagePack, #JSON {
     float: left;
-    with: 50%;
+    width: 50%;
 }
