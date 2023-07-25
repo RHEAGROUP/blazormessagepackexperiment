@@ -4,7 +4,7 @@ Blazor is proving to be a great technology stack for the [CDP4-COMET](https://ww
 
 For the .NET Framework based desktop application this is not an issue. The code-generated [Json.NET](https://www.newtonsoft.com/json) implementation has been optimized and was never cause for any concern. But now that we are also developing for the web, and in particular using Blazor WebAssembly we've noticed poor performance for these large payloads. Deserialization may take anywhere from 30 to 60 seconds, which is far too slow to give users a smooth experience. Our original serializer is implemented using [Json.NET](https://www.newtonsoft.com/json), we've achieved a performance improvement using [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to?pivots=dotnet-7-0), and even better performance using [MessagePack](https://github.com/MessagePack-CSharp/MessagePack-CSharp). This repository contains a prototype we've developed to compare [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to?pivots=dotnet-7-0) vs [MessagePack](https://github.com/MessagePack-CSharp/MessagePack-CSharp) and that has given us the confidence that a full [MessagePack](https://github.com/MessagePack-CSharp/MessagePack-CSharp) implementation is required to give us the performance we need.
 
-> NOTE: The prototype demonstrates that MessagePack is approximately 3 times faster in Blazor WebAssembly than System.Text.Json
+> NOTE: The prototype demonstrates that MessagePack is approximately 3 times faster in Blazor WebAssembly than System.Text.Json. FireFox outperforms Chrome and Edge when deserializing MessagePack and Json with a factor of 3 to 4.
 
 # Background
 
@@ -556,7 +556,7 @@ The results are presented below. The numbers per iteration are not absolutes, th
 
 The REST requests are performed 50 times using varrious payload sizes of 2, 20, 200, 2000, 20000 objects. The table below shows the results for the 3 browsers and 2 deserialization formats. Even though the table does show a difference in performance between the browsers, the focus here is on the performance difference between System.Text.Json and MessagePack.
 
-> RESULT: from the numbers we can state that MessagePack deserialization is approximately 3 times faster than System.Text.Json deserialization.
+> RESULT: from the numbers we can state that MessagePack deserialization is approximately 3 times faster than System.Text.Json deserialization. For large payloads, Firefox outperforms Chrome and Edge in both the MessagePack and Json case with a factor of 3 t0 4.
 
 
 | Brosser | Serialization | nr of objects | payload size [bytes] | mean deserilization time [ms] |
