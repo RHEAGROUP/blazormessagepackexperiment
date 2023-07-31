@@ -542,10 +542,6 @@ builder.Services.AddCarter(configurator: c =>
 });
 ```
 
-# CDP4-COMET model Versions
-
-The CDP4-COMET data-model provides versioned extensions of ECSS-E-TM-10-25. All version will need to be supported. MessagePack uses string and numerical keys to identify properties of an object when serialized to the binary format. The numneric keys provide best performance and are therefore used for serialization of the 10-25 objects. The value of the keys may not change over time. For each version that CDP4-COMET supports, a dedicated versioned `Payload` class and dedicated versioned `IMessagePackFormatter{Thing}` classes are generated. For each version a namespace is created. The baseline version is `1.0.0` which corresponds to version `2.4.1` of ECSS-E-TM-10-25 Annex A. The namespace for version `1.0.0` of the MessagePack serializer is the following: `CDP4MessagePackerializer.v1_0_0.`.
-
 # Performance Comparison
 
 The Blazor WebAssembly application uses both the MessagePack and Json serilizer to deserialize the response from the server. The application has been tested using
@@ -554,10 +550,9 @@ The Blazor WebAssembly application uses both the MessagePack and Json serilizer 
   - Edge - version 115.0.1901.183 (Official build) (64-bit)
 The results are presented below. The numbers per iteration are not absolutes, the data we are after is the difference between MessagePack and JSON.
 
-The REST requests are performed 50 times using varrious payload sizes of 2, 20, 200, 2000, 20000 objects. The table below shows the results for the 3 browsers and 2 deserialization formats. Even though the table does show a difference in performance between the browsers, the focus here is on the performance difference between System.Text.Json and MessagePack.
+The REST requests are performed 50 times using varrious payload sizes of 2, 20, 200, 2000, and 20000 objects. The table below shows the results for the 3 browsers and 2 deserialization formats. Even though the table does show a difference in performance between the browsers, the focus here is on the performance difference between System.Text.Json and MessagePack.
 
 > RESULT: from the numbers we can state that MessagePack deserialization is approximately 3 times faster than System.Text.Json deserialization. For large payloads, Firefox outperforms Chrome and Edge in both the MessagePack and Json case with a factor of 3 to 4.
-
 
 | Brosser | Serialization | nr of objects | payload size [bytes] | mean deserilization time [ms] |
 | ------- | ------------- | --------------| -------------------- | ----------------------------- |

@@ -130,32 +130,6 @@
 		sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
 		this.jSONResults = sb.ToString();
 		StateHasChanged();
-		
-	    sb.Append("50 iterations of 200000 objects; ");
-	    metrics = new List<DeserializationMetrics>();
-	    for (int i = 0; i < 50; i++)
-	    {
-	        var deserializationMetrics = await this.QueryBySizeJson(100000, cancellationToken);
-	        metrics.Add(deserializationMetrics);
-	        payloadSize = deserializationMetrics.Size;
-	    }
-	    averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
-	    sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
-	    this.jSONResults = sb.ToString();
-	    StateHasChanged();
-
-	    sb.Append("50 iterations of 2000000 objects; ");
-	    metrics = new List<DeserializationMetrics>();
-	    for (int i = 0; i < 50; i++)
-	    {
-	        var deserializationMetrics = await this.QueryBySizeJson(1000000, cancellationToken);
-	        metrics.Add(deserializationMetrics);
-	        payloadSize = deserializationMetrics.Size;
-	    }
-	    averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
-	    sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
-	    this.jSONResults = sb.ToString();
-	    StateHasChanged();
 
 	    sb.AppendLine("========================= DOME =================================");
 	    this.jSONResults = sb.ToString();
@@ -252,32 +226,6 @@
 		this.messagePackResults = sb.ToString();
 		StateHasChanged();
 		
-	    sb.Append("50 iterations of 200000 objects; ");
-	    metrics = new List<DeserializationMetrics>();
-	    for (int i = 0; i < 50; i++)
-	    {
-	        var deserializationMetrics = await this.QueryBySizeMessagePack(100000, cancellationToken);
-	        metrics.Add(deserializationMetrics);
-	        payloadSize = deserializationMetrics.Size;
-	    }
-	    averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
-	    sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
-	    this.messagePackResults = sb.ToString();
-	    StateHasChanged();
-
-	    sb.Append("50 iterations of 2000000 objects; ");
-	    metrics = new List<DeserializationMetrics>();
-	    for (int i = 0; i < 50; i++)
-	    {
-	        var deserializationMetrics = await this.QueryBySizeMessagePack(1000000, cancellationToken);
-	        metrics.Add(deserializationMetrics);
-	        payloadSize = deserializationMetrics.Size;
-	    }
-	    averageMilliseconds = metrics.Select(x => x.ElapsedMilliseconds).Average();
-	    sb.AppendLine($"{payloadSize} bytes; Mean [ms]: {averageMilliseconds}");
-	    this.messagePackResults = sb.ToString();
-	    StateHasChanged();
-
 	    sb.AppendLine("========================= DOME =================================");
 	    this.messagePackResults = sb.ToString();
 	    StateHasChanged();
